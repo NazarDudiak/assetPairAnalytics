@@ -28,7 +28,6 @@ public class MainTest {
         assertEquals(expected, actual);
     }
 
-
     @Before
     public void setUp() {
         // Test JSONArray with data to analyze
@@ -78,7 +77,7 @@ public class MainTest {
     // Parse the result string to extract the value of the first observed timestamp
     private String parseFirstTimestamp(String result) {
         String[] lines = result.split("\n");
-        return lines[1].substring("First timestamp seen: ".length());
+        return lines[1].substring("The first timestamp seen is: ".length());
     }
 
     // Parse the result string to extract the timestamp value of the last observation

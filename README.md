@@ -1,4 +1,4 @@
-# Asset Pair Analytics
+# Asset Pair Analytics v1.0
 
 This Java application provides analytics for asset pairs based on the data provided in the `stock_data.json` file. The user is prompted to provide an asset pair as an argument, and the program retrieves analytics for that asset pair.
 
