@@ -11,7 +11,6 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Main {
-
     public static void main(String[] args) {
         try {
             // Read the contents of the file as a string
@@ -23,7 +22,7 @@ public class Main {
             // A loop for constantly entering new requests from the user
             while (true) {
                 String assetPair = promptAssetPair(); // Ask the user for a pair of assets, or expect /q
-                if (!assetPair.equals("/q")) { // If the user doesn't want to end the job
+                if (!assetPair.isEmpty()) { // If the user doesn't want to end the job
                     displayAnalytics(assetPair, jsonArray); // Display analytics for a given pair of assets
                 } else {
                     System.out.println("Bye!");
@@ -37,7 +36,7 @@ public class Main {
 
     // Method for user input about a pair of assets
     public static String promptAssetPair() {
-        // Список доступних пар активів
+        // List of available asset pairs
         Set<String> assetPairs = new HashSet<>();
         assetPairs.add("USDT/PLN");
         assetPairs.add("USDT/EUR");
@@ -49,15 +48,15 @@ public class Main {
         while (true) {
             System.out.print("Enter a pair of assets (USDT/PLN, USDT/EUR, USDT/UAH, USDT/BTC): ");
             String assetPair = scanner.nextLine();
-            if (assetPairs.contains(assetPair)) {
-                return assetPair;
-            } else if (assetPair.equals("/q")) {
+            if (assetPair.equals("/q")) {
                 break; // Exit the loop
+            } else if (assetPairs.contains(assetPair)) {
+                return assetPair;
             } else {
                 System.out.println("Incorrect input. Try again or type /q.");
             }
         }
-        return "/q"; // Return an empty string in case of loop exit via "/q"
+        return ""; // Return an empty string in case of loop exit via "/q"
     }
 
     // Method for outputting analytics for a given pair of assets
@@ -80,17 +79,13 @@ public class Main {
                 sum += value;
                 if (timestamp < firstTimestamp) {
                     firstTimestamp = timestamp;
-                } else if (timestamp > lastTimestamp) {
+                }
+                if (timestamp > lastTimestamp) {
                     lastTimestamp = timestamp;
                 }
                 timestamps.add(timestamp);
             }
         }
-        // Display the analytics on the screen
-        System.out.println("Average price: " + (sum / matchingPairsCount));
-        System.out.println("The first timestamp seen is: " + formatDate(firstTimestamp));
-        System.out.println("Timestamp of last observation: " + formatDate(lastTimestamp));
-        System.out.println("Presence of duplicates: " + (timestamps.size() < matchingPairsCount));
 
         // Forming a line with analytics for testing
         String result = "";
@@ -98,6 +93,9 @@ public class Main {
         result += "The first timestamp seen is: " + formatDate(firstTimestamp) + "\n";
         result += "Timestamp of last observation: " + formatDate(lastTimestamp) + "\n";
         result += "Presence of duplicates: " + (timestamps.size() < matchingPairsCount) + "\n";
+
+        // Display the analytics on the screen
+        System.out.print(result);
 
         return result;
     }
