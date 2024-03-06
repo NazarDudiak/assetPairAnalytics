@@ -11,23 +11,23 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Main {
-    private static JSONArray jsonArray; // Оголошення змінної
 
     public static void main(String[] args) {
         try {
-            // Зчитуємо вміст файлу у вигляді рядка
-            String jsonStr = new String(Files.readAllBytes(Paths.get("stock_data.json")));
-            // Створюємо JSONArray з рядка
-            jsonArray = new JSONArray(jsonStr);
+            // Read the contents of the file as a string
+            String jsonStr = new String(Files.readAllBytes(Paths.get("src/main/resources/stock_data.json")));
 
-            // Цикл для постійного введення нових запитів від користувача
+            // Create a JSONArray from a string
+            JSONArray jsonArray = new JSONArray(jsonStr);
+
+            // A loop for constantly entering new requests from the user
             while (true) {
-                String assetPair = promptAssetPair(); // Запитуємо користувача про пару активів, або очікуємо /q
-                if (!assetPair.equals("/q")) { // Якщо користувач не бажає завершити роботу
-                    displayAnalytics(assetPair); // Відображаємо аналітику для заданої пари активів
+                String assetPair = promptAssetPair(); // Ask the user for a pair of assets, or expect /q
+                if (!assetPair.equals("/q")) { // If the user doesn't want to end the job
+                    displayAnalytics(assetPair, jsonArray); // Display analytics for a given pair of assets
                 } else {
-                    System.out.println("До зустрічі!");
-                    break; // Вихід з циклу
+                    System.out.println("Bye!");
+                    break; // Exit the loop
                 }
             }
         } catch (IOException e) {
@@ -35,7 +35,7 @@ public class Main {
         }
     }
 
-    // Метод для введення користувача про пару активів
+    // Method for user input about a pair of assets
     public static String promptAssetPair() {
         // Список доступних пар активів
         Set<String> assetPairs = new HashSet<>();
@@ -44,31 +44,31 @@ public class Main {
         assetPairs.add("USDT/UAH");
         assetPairs.add("USDT/BTC");
 
-        // Цикл для перевірки введення користувача
+        // Loop to validate user input
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.print("Введіть пару активів (USDT/PLN, USDT/EUR, USDT/UAH, USDT/BTC): ");
+            System.out.print("Enter a pair of assets (USDT/PLN, USDT/EUR, USDT/UAH, USDT/BTC): ");
             String assetPair = scanner.nextLine();
             if (assetPairs.contains(assetPair)) {
                 return assetPair;
             } else if (assetPair.equals("/q")) {
-                break; // Вихід з циклу
+                break; // Exit the loop
             } else {
-                System.out.println("Неправильний ввід. Спробуйте ще раз, або введіть /q.");
+                System.out.println("Incorrect input. Try again or type /q.");
             }
         }
-        return "/q"; // Повернення пустого рядка в разі виходу з циклу через "/q"
+        return "/q"; // Return an empty string in case of loop exit via "/q"
     }
 
-    // Метод для виведення аналітики для заданої пари активів
-    public static void displayAnalytics(String assetPair) {
+    // Method for outputting analytics for a given pair of assets
+    public static String displayAnalytics(String assetPair, JSONArray jsonArray) {
         double sum = 0;
-        int matchingPairsCount = 0; // Лічильник кількості пар, які ми беремо до уваги
+        int matchingPairsCount = 0; // A counter of the number of pairs we're considering
         long firstTimestamp = Long.MAX_VALUE;
         long lastTimestamp = Long.MIN_VALUE;
         Set<Long> timestamps = new HashSet<>();
 
-        // Ітеруємося по кожному об'єкту JSON у масиві
+        // Iterates over each JSON object in the array
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             if (jsonObject.getString("assetPair").equals(assetPair)) {
@@ -86,18 +86,27 @@ public class Main {
                 timestamps.add(timestamp);
             }
         }
-        // Виводимо аналітику на екран
-        System.out.println("Середня ціна: " + (sum / matchingPairsCount));
-        System.out.println("Перша помічена позначка часу: " + formatDate(firstTimestamp));
-        System.out.println("Позначка часу останнього спостереження: " + formatDate(lastTimestamp));
-        System.out.println("Наявність дублікатів: " + (timestamps.size() < matchingPairsCount));
+        // Display the analytics on the screen
+        System.out.println("Average price: " + (sum / matchingPairsCount));
+        System.out.println("The first timestamp seen is: " + formatDate(firstTimestamp));
+        System.out.println("Timestamp of last observation: " + formatDate(lastTimestamp));
+        System.out.println("Presence of duplicates: " + (timestamps.size() < matchingPairsCount));
+
+        // Forming a line with analytics for testing
+        String result = "";
+        result += "Average price: " + (sum / matchingPairsCount) + "\n";
+        result += "The first timestamp seen is: " + formatDate(firstTimestamp) + "\n";
+        result += "Timestamp of last observation: " + formatDate(lastTimestamp) + "\n";
+        result += "Presence of duplicates: " + (timestamps.size() < matchingPairsCount) + "\n";
+
+        return result;
     }
 
-    // Метод для форматування мітки часу у потрібний нам формат
+    // Method to format the timestamp into the format we need
     public static String formatDate(long timestamp) {
         Date date = new Date(timestamp * 1000L);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Встановлення часової зони на UTC
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Set the time zone to UTC
         return sdf.format(date);
     }
 }
