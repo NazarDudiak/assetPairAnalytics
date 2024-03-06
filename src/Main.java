@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class Main {
     }
 
     // Метод для введення користувача про пару активів
-    private static String promptAssetPair() {
+    public static String promptAssetPair() {
         // Список доступних пар активів
         Set<String> assetPairs = new HashSet<>();
         assetPairs.add("USDT/PLN");
@@ -46,7 +47,7 @@ public class Main {
         // Цикл для перевірки введення користувача
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("Введіть пару активів (USDT/PLN, USDT/EUR, USDT/UAH, USDT/BTC):");
+            System.out.print("Введіть пару активів (USDT/PLN, USDT/EUR, USDT/UAH, USDT/BTC): ");
             String assetPair = scanner.nextLine();
             if (assetPairs.contains(assetPair)) {
                 return assetPair;
@@ -60,9 +61,9 @@ public class Main {
     }
 
     // Метод для виведення аналітики для заданої пари активів
-    private static void displayAnalytics(String assetPair) {
+    public static void displayAnalytics(String assetPair) {
         double sum = 0;
-        int assetPairMatches = 0; // Лічильник кількості пар, які ми беремо до уваги
+        int matchingPairsCount = 0; // Лічильник кількості пар, які ми беремо до уваги
         long firstTimestamp = Long.MAX_VALUE;
         long lastTimestamp = Long.MIN_VALUE;
         Set<Long> timestamps = new HashSet<>();
@@ -71,7 +72,7 @@ public class Main {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             if (jsonObject.getString("assetPair").equals(assetPair)) {
-                assetPairMatches++;
+                matchingPairsCount++;
 
                 double value = jsonObject.getDouble("value");
                 long timestamp = jsonObject.getLong("timestamp");
@@ -86,16 +87,17 @@ public class Main {
             }
         }
         // Виводимо аналітику на екран
-        System.out.println("Середня ціна: " + (sum / assetPairMatches));
+        System.out.println("Середня ціна: " + (sum / matchingPairsCount));
         System.out.println("Перша помічена позначка часу: " + formatDate(firstTimestamp));
         System.out.println("Позначка часу останнього спостереження: " + formatDate(lastTimestamp));
-        System.out.println("Наявність дублікатів: " + (timestamps.size() < assetPairMatches));
+        System.out.println("Наявність дублікатів: " + (timestamps.size() < matchingPairsCount));
     }
 
     // Метод для форматування мітки часу у потрібний нам формат
-    private static String formatDate(long timestamp) {
+    public static String formatDate(long timestamp) {
         Date date = new Date(timestamp * 1000L);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Встановлення часової зони на UTC
         return sdf.format(date);
     }
 }
