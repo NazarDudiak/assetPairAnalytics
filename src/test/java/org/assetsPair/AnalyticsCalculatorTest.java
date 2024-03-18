@@ -12,7 +12,7 @@ public class AnalyticsCalculatorTest {
 
     @Before
     public void setUp() {
-        // Створюємо тестовий набір даних
+        // Create a test data set
         jsonArray = new JsonArray();
         JsonObject object1 = new JsonObject();
         object1.addProperty("assetPair", "USDT/PLN");

@@ -160,7 +160,7 @@ class AnalyticsResult {
 
     @Override
     public String toString() {
-        return "Average price: %s\nThe first timestamp seen is: %s\nTimestamp of last observation: %s\nPresence of duplicates: %s\n".formatted(averagePrice, formatDate(firstTimestamp), formatDate(lastTimestamp), hasDuplicates);
+        return String.format("Average price: %s\nThe first timestamp seen is: %s\nTimestamp of last observation: %s\nPresence of duplicates: %s\n", averagePrice, formatDate(firstTimestamp), formatDate(lastTimestamp), hasDuplicates);
     }
 
     public double getAveragePrice() {

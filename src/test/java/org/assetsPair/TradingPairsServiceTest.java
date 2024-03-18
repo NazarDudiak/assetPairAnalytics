@@ -67,7 +67,7 @@ public class TradingPairsServiceTest {
         String formattedLastTimestamp = formatDate(expectedLastTimestamp);
 
         // Expected output
-        String expectedOutput = "Average price: %s\nThe first timestamp seen is: %s\nTimestamp of last observation: %s\nPresence of duplicates: %s".formatted(expectedAveragePrice, formattedFirstTimestamp, formattedLastTimestamp, expectedHasDuplicates);
+        String expectedOutput = String.format("Average price: %s\nThe first timestamp seen is: %s\nTimestamp of last observation: %s\nPresence of duplicates: %s", expectedAveragePrice, formattedFirstTimestamp, formattedLastTimestamp, expectedHasDuplicates);
 
         // Actual output
         String actualOutput = outputStreamCaptor.toString().trim();
